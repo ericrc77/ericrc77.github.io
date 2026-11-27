@@ -1,0 +1,50 @@
+---
+import type { Project } from '../content/projects';
+import { homePath, projectPath } from '../content/routes';
+import { TEXT, type Lang } from '../content/text';
+import Base from '../layouts/Base.astro';
+import ContactSection from './ContactSection.astro';
+import ProjectMedia from './ProjectMedia.astro';
+
+interface Props {
+  lang: Lang;
+  project: Project;
+}
+
+const { lang, project } = Astro.props;
+const t = TEXT[lang];
+const text = project.text[lang];
+---
+
+<Base
+  lang={lang}
+  title={`${text.title} · Eric Campos`}
+  description={text.summary}
+  paths={{ en: projectPath('en', project.slug), pt: projectPath('pt', project.slug) }}
+>
+  <article class="case">
+    <div class="wrap narrow">
+      <p><a href={`${homePath(lang)}#work`}>← {t.caseStudy.back}</a></p>
+      <h1>{text.title}</h1>
+      <p class="lead">{text.summary}</p>
+      <p class="actions">
+        {project.demo && <a class="button" href={project.demo.url}>{t.work[project.demo.kind]}</a>}
+        <a class="button ghost" href={project.code}>{t.work.code}</a>
+      </p>
+      <ProjectMedia project={project} lang={lang} eager />
+      <h2>{t.caseStudy.problem}</h2>
+      <p>{text.problem}</p>
+      <h2>{t.caseStudy.approach}</h2>
+      <dl class="decisions">
+        {text.approach.map((d) => <div><dt>{d.title}</dt><dd>{d.text}</dd></div>)}
+      </dl>
+      <h2>{t.caseStudy.evidence}</h2>
+      <ul>{text.evidence.map((e) => <li>{e}</li>)}</ul>
+      <h2>{t.caseStudy.limits}</h2>
+      <p>{text.limits}</p>
+      <h2>{t.caseStudy.stack}</h2>
+      <ul class="tags">{project.stack.map((s) => <li>{s}</li>)}</ul>
+    </div>
+  </article>
+  <ContactSection lang={lang} />
+</Base>

@@ -1,0 +1,21 @@
+---
+import { PROFILE } from '../content/profile';
+import { TEXT, type Lang } from '../content/text';
+import ContactActions from './ContactActions.astro';
+
+const { lang } = Astro.props as { lang: Lang };
+const t = TEXT[lang].contact;
+---
+
+<section id="contact" class="contact" aria-labelledby="contact-title">
+  <div class="wrap">
+    <h2 id="contact-title">{t.title}</h2>
+    <p class="lead">{t.lead}</p>
+    <ContactActions lang={lang} />
+    <dl>
+      <div><dt>{t.emailLabel}</dt><dd><a href={`mailto:${PROFILE.email}`}>{PROFILE.email}</a></dd></div>
+      <div><dt>{t.phoneLabel}</dt><dd><a href={`tel:${PROFILE.phone}`}>{PROFILE.phoneDisplay}</a></dd></div>
+      <div><dt>GitHub</dt><dd><a href={PROFILE.github}>{t.github}</a></dd></div>
+    </dl>
+  </div>
+</section>
