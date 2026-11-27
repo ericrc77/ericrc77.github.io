@@ -1,0 +1,14 @@
+---
+import { PROFILE } from '../content/profile';
+import { TEXT, type Lang } from '../content/text';
+
+const { lang } = Astro.props as { lang: Lang };
+const t = TEXT[lang].contact;
+const whatsapp = `https://wa.me/${PROFILE.phone.slice(1)}?text=${encodeURIComponent(t.whatsappText)}`;
+const mail = `mailto:${PROFILE.email}?subject=${encodeURIComponent(t.subject)}`;
+---
+
+<p class="actions">
+  <a class="button" href={whatsapp} rel="noopener">{t.whatsapp}</a>
+  <a class="button ghost" href={mail}>{t.email}</a>
+</p>

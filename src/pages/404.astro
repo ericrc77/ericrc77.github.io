@@ -1,0 +1,16 @@
+---
+import { homePath } from '../content/routes';
+import { TEXT } from '../content/text';
+import Base from '../layouts/Base.astro';
+---
+
+<Base lang="en" title="404 · Eric Campos" description={TEXT.en.notFound.text} paths={{ en: '/', pt: '/pt/' }} noindex>
+  <section>
+    <div class="wrap narrow">
+      <h1>{TEXT.en.notFound.title}</h1>
+      <p>{TEXT.en.notFound.text}</p>
+      <p><a href={homePath('en')}>{TEXT.en.notFound.home}</a></p>
+      <p lang="pt-BR"><a href={homePath('pt')}>{TEXT.pt.notFound.home}</a></p>
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,87 @@
+---
+import '@fontsource-variable/space-grotesk';
+import '../styles/global.css';
+import { PROFILE } from '../content/profile';
+import { homePath } from '../content/routes';
+import { TEXT, type Lang } from '../content/text';
+
+interface Props {
+  lang: Lang;
+  title: string;
+  description: string;
+  /** Path of this page in each language, for the switcher and alternate links. */
+  paths: Record<Lang, string>;
+  noindex?: boolean;
+}
+
+const { lang, title, description, paths, noindex = false } = Astro.props;
+const t = TEXT[lang];
+const other: Lang = lang === 'en' ? 'pt' : 'en';
+const absolute = (path: string) => new URL(path, Astro.site).href;
+const home = homePath(lang);
+
+const person = {
+  '@context': 'https://schema.org',
+  '@type': 'Person',
+  name: PROFILE.name,
+  alternateName: PROFILE.fullName,
+  jobTitle: 'Software Developer',
+  worksFor: { '@type': 'Organization', name: PROFILE.employer },
+  url: absolute('/'),
+  email: `mailto:${PROFILE.email}`,
+  telephone: PROFILE.phone,
+  sameAs: [PROFILE.github],
+  knowsAbout: ['Systems integration', 'Automation', 'APIs', 'Web applications'],
+};
+---
+
+<!doctype html>
+<html lang={t.locale}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    {noindex ? <meta name="robots" content="noindex" /> : <link rel="canonical" href={absolute(paths[lang])} />}
+    {!noindex && <link rel="alternate" hreflang="en" href={absolute(paths.en)} />}
+    {!noindex && <link rel="alternate" hreflang="pt-BR" href={absolute(paths.pt)} />}
+    {!noindex && <link rel="alternate" hreflang="x-default" href={absolute(paths.en)} />}
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={absolute(paths[lang])} />
+    <meta property="og:locale" content={t.ogLocale} />
+    <meta property="og:image" content={absolute('/og.png')} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f7f5f0" />
+    <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0d1117" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <script is:inline type="application/ld+json" set:html={JSON.stringify(person)} />
+  </head>
+  <body>
+    <a class="skip" href="#content">{t.skip}</a>
+    <header class="top">
+      <div class="wrap bar">
+        <a class="brand" href={home}>{PROFILE.name}</a>
+        <nav aria-label={t.nav.label}>
+          <a href={`${home}#work`}>{t.nav.work}</a>
+          <a href={`${home}#services`}>{t.nav.services}</a>
+          <a href={`${home}#experience`}>{t.nav.experience}</a>
+          <a href={`${home}#contact`}>{t.nav.contact}</a>
+        </nav>
+        <a class="language" href={paths[other]} hreflang={TEXT[other].locale} lang={TEXT[other].locale}>{t.otherLanguage}</a>
+      </div>
+    </header>
+    <main id="content">
+      <slot />
+    </main>
+    <footer class="bottom">
+      <div class="wrap">
+        <p>© {PROFILE.fullName} · <a href={PROFILE.github}>GitHub</a> · <a href={`mailto:${PROFILE.email}`}>{PROFILE.email}</a></p>
+        <p>{t.footer}</p>
+      </div>
+    </footer>
+  </body>
+</html>
